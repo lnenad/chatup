@@ -1,0 +1,40 @@
+{
+  "name": "chat-ui",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.11.3",
+    "flow-bin": "^0.61.0",
+    "moment": "^2.29.1",
+    "notistack": "^1.0.6",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-feather": "^1.0.7",
+    "react-scripts": "^4.0.3",
+    "styled-components": "^5.2.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "lint": "npx eslint .",
+    "prettier": "prettier --single-quote --print-width 100 --trailing-comma es5 --write 'src/**/*.js'"
+  },
+  "flow": "flow",
+  "devDependencies": {
+    "prettier": "^1.9.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

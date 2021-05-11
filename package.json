@@ -1,0 +1,14 @@
+{
+    "name": "chatup",
+    "version": "1.0.0",
+    "description": "ChatUp - A simple chat application",
+    "main": "server/index.js",
+    "scripts": {
+      "start": "node server/index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {}
+  }
+  
