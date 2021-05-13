@@ -124,7 +124,7 @@ const LoginPanel = ({ loginUser }) => {
             }}
             placeholder="Password"
           />
-          <LoginInputButton type="submit" value="Login" onClick={submit} />
+          <LoginInputButton type="submit" title="Login to the app" value="Login" onClick={submit} />
         </LoginInputContainer>
       </LoginPanelContentContainer>
     </LoginPanelContainer>

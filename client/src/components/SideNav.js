@@ -52,11 +52,11 @@ const SideNav = ({ user, page, setPage }) => (
     </AvatarContainer>
     <NavContainer>
       {user.admin && (
-        <NavItem onClick={() => setPage("admin")} selected={page === "admin"}>
+        <NavItem onClick={() => setPage("admin")} selected={page === "admin"} title="Administration">
           <Command size={30} />
         </NavItem>
       )}
-      <NavItem onClick={() => setPage("chat")} selected={page === "chat"}>
+      <NavItem onClick={() => setPage("chat")} selected={page === "chat"} title="Messages">
         <MessageSquare size={30} />
       </NavItem>
     </NavContainer>

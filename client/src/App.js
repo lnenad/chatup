@@ -1,5 +1,5 @@
 import moment from "moment";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import styled from "styled-components";
 import SideNav from "./components/SideNav";
 import MessagesPanel from "./components/UsersMessagesPanel";
@@ -8,9 +8,11 @@ import LoginPanel from "./components/LoginPanel";
 import auth from "./utilities/auth";
 import AdminPanel from "./components/AdminPanel";
 import UsersPanel from "./components/UsersPanel";
-import { Send } from "react-feather";
+import { Send, Heart, Smile } from "react-feather";
 import { useSnackbar } from "notistack";
 import { colors } from "./colors";
+import playNotification from "./utilities/sound";
+import { EmojiButton } from "@joeattardi/emoji-button";
 
 const { newClientType, newMessageType } = require("./mesageTypes");
 
@@ -33,7 +35,10 @@ const handleError = async (enqueueSnackbar, setIsLoggedIn, err) => {
   enqueueSnackbar(r.error ? r.error : r.toString(), {
     variant: "error",
   });
-  if (r.error && (r.error == "Unauthorized" || r.error.includes('Failed to fetch'))) {
+  if (
+    r.error &&
+    (r.error == "Unauthorized" || r.error.includes("Failed to fetch"))
+  ) {
     setIsLoggedIn(false);
     auth.removeToken();
   }
@@ -77,6 +82,26 @@ const MessagePanelContainer = styled.div`
   background-color: #f5f6f8;
 `;
 
+let activeTimeout = null;
+let activeWindow = true;
+let activeTimeoutTime = 30000;
+
+const inactive = () => {
+  activeWindow = false;
+}
+
+const resetTimer = () => {
+  activeWindow = true;
+  clearTimeout(activeTimeout);
+  activeTimeout = setTimeout(inactive, activeTimeoutTime)
+};
+activeTimeout = setTimeout(inactive, activeTimeoutTime)
+
+document.addEventListener("mousemove", resetTimer, false);
+document.addEventListener("mousedown", resetTimer, false);
+document.addEventListener("keypress", resetTimer, false);
+document.addEventListener("touchmove", resetTimer, false);
+
 const App = () => {
   const { enqueueSnackbar } = useSnackbar();
 
@@ -88,17 +113,27 @@ const App = () => {
   const [usersMap, setUsersMap] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(auth.isUserLoggedIn());
   const [messageValue, setMessageValue] = useState("");
+  const [picker] = useState(
+    new EmojiButton({
+      autoHide: false,
+    })
+  );
+  const textInputRef = useRef(null);
 
   ws.onmessage = useCallback((event) => {
     console.log(event);
     const payload = JSON.parse(event.data);
     switch (payload.type) {
       case newClientType:
-        console.log("New Client:", payload);
+        console.log("New Client:", payload.data);
         setReloadUserData(!reloadUserData);
         break;
       case newMessageType:
-        console.log("New Message:", payload);
+        console.log("New Message:", payload.data, user);
+
+        if (payload.data.userID != user.userID && (document.hidden || !activeWindow)) {
+          playNotification();
+        }
 
         const message = {
           ...payload.data,
@@ -241,6 +276,24 @@ const App = () => {
       .catch(handleError.bind(null, enqueueSnackbar, setIsLoggedIn));
   }, [usersMap]);
 
+  useEffect(() => {
+    console.log("INVOKED");
+
+    picker.on("emoji", (selection) => {
+      // handle the selected emoji here
+      console.log(selection.emoji);
+      console.log(textInputRef);
+      const input = textInputRef.current;
+      const startPos = input.selectionStart;
+      const endPos = input.selectionEnd;
+      setMessageValue(
+        input.value.substring(0, startPos) +
+          selection.emoji +
+          input.value.substring(endPos, input.value.length)
+      );
+    });
+  }, [textInputRef]);
+
   if (!isLoggedIn) {
     return (
       <FullScreenAppContainer>
@@ -259,6 +312,17 @@ const App = () => {
     setMessageValue("");
   };
 
+  const addHeart = () => {
+    const input = textInputRef.current;
+    const startPos = input.selectionStart;
+    const endPos = input.selectionEnd;
+    setMessageValue(
+      input.value.substring(0, startPos) +
+        `❤️` +
+        input.value.substring(endPos, input.value.length)
+    );
+  };
+
   switch (page) {
     case "chat":
       return (
@@ -273,12 +337,22 @@ const App = () => {
             />
             <MessageInputContainer onSubmit={submitMessage}>
               <MessageInputText
+                ref={textInputRef}
                 value={messageValue}
                 onChange={(e) => {
                   e.preventDefault();
                   setMessageValue(e.target.value);
                 }}
                 placeholder="Write text here"
+              />
+              <Heart
+                color={colors.lightBlack}
+                onClick={addHeart}
+                style={{ marginRight: "9px" }}
+              />
+              <Smile
+                onClick={() => picker.togglePicker(textInputRef.current)}
+                style={{ marginRight: "9px" }}
               />
               <Send color={colors.lightBlack} onClick={submitMessage} />
             </MessageInputContainer>

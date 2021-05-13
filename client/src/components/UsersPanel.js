@@ -99,7 +99,7 @@ const UsersActionsContainer = styled.div`
   margin-right: 2rem;
 `;
 
-const UsersActions = styled.div`
+const DeleteAction = styled.div`
   width: 2rem;
   height: 2rem;
   border-radius: 100%;
@@ -111,31 +111,6 @@ const UsersActions = styled.div`
   &:hover {
     color: ${colors.lightBlack};
   }
-`;
-
-//todo, work on this, sloppy right now
-const UsersPreviewContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 3rem;
-  width: 100%;
-  white-space: normal;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-left: 1.5rem;
-  line-height: 1.5rem;
-  color: ${colors.lightBlack};
-  opacity: 0.7;
-`;
-
-const UsersDivider = styled.hr`
-  display: block;
-  height: 1px;
-  border: 0;
-  border-top: 1px solid ${colors.lightestGray};
-  opacity: 0.5;
-  padding: 0;
-  margin: 0rem 0 0rem 7rem;
 `;
 
 const UsersPanel = ({ users, user, deleteUser }) => (
@@ -162,9 +137,9 @@ const UsersPanel = ({ users, user, deleteUser }) => (
               </UsersContentHeaderContainer>
             </UsersContentContainer>
             <UsersActionsContainer>
-              <UsersActions>
+              <DeleteAction title="Delete this user">
                 <XSquare onClick={deleteUser.bind(null, u.userID)} size={20} />
-              </UsersActions>
+              </DeleteAction>
             </UsersActionsContainer>
           </UserContainer>
         );

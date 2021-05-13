@@ -166,6 +166,7 @@ const AdminPanel = ({ newUser, messages, user }) => {
               type="submit"
               value="Save"
               onClick={submitNewUser}
+              title="Save this user"
             />
           </NewUserContainer>
         ) : (
